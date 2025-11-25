@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+}
+
+html, body {
+  overflow-x: hidden;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --font-sans: var(--font-mulish);
+}
+
+.container {
+  @apply max-w-7xl mx-auto;
+}
