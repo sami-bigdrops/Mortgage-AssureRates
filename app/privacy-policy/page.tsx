@@ -1254,7 +1254,7 @@ export default function PrivacyPolicy() {
             <div className="mt-12">
               <h2 className="text-2xl font-bold text-[#1E3A8A] mb-6">GDPR and CASL Compliance</h2>
               <p className="text-gray-700">
-                Unfortunately, we are not in a position to accept users who are not U.S. Citizens. The CASL and GDPR regulations, in particular, provide certain rights to their citizens which are not the same as the United States. For this reason, we do not accept submissions from any individual outside the United States. Our services are specifically designed for United States citizens. We have expunged all European Union Member and Canadian Citizens data to the extent we have been made aware of the same. If you are a European Union Member, Canadian or resident of any country outside of the United States, please notify us at <a href="mailto:contact@assuriffii.com" className="text-blue-600 hover:underline">contact@assuriffii.com</a>.
+                Unfortunately, we are not in a position to accept users who are not U.S. Citizens. The CASL and GDPR regulations, in particular, provide certain rights to their citizens which are not the same as the United States. For this reason, we do not accept submissions from any individual outside the United States. Our services are specifically designed for United States citizens. We have expunged all European Union Member and Canadian Citizens data to the extent we have been made aware of the same. If you are a European Union Member, Canadian or resident of any country outside of the United States, please notify us at <a href="mailto:contact@assurerates.com" className="text-blue-600 hover:underline">contact@assurerates.com</a>.
               </p>
             </div>
 
@@ -1268,7 +1268,7 @@ export default function PrivacyPolicy() {
             <div className="mt-12">
               <h2 className="text-2xl font-bold text-[#1E3A8A] mb-6">Contact Us Concerning Our Privacy Policy:</h2>
               <p className="text-gray-700 mb-4">
-                If you have any questions regarding this Privacy Policy, please contact: <a href="mailto:contact@assuriffii.com" className="text-blue-600 hover:underline">contact@assuriffii.com</a>.
+                If you have any questions regarding this Privacy Policy, please contact: <a href="mailto:contact@assurerates.com" className="text-blue-600 hover:underline">contact@assurerates.com</a>.
               </p>
               <p className="text-gray-700">
                 You may write to us at:<br/>

@@ -72,7 +72,7 @@ export default function TermsOfUse() {
             <section>
               <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-[#1E3A8A] mb-3 sm:mb-4">4. REJECTION, TERMINATION AND CANCELLATION.</h2>
               <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-                Company or its participating service provider may reject any registration or subsequent application from any person with or without cause at their sole discretion. Your status as a registered user creates only a customer relationship with Company and does not create an employment relationship, an independent contractor relationship, an agency relationship, or any other relationship. You may cancel your request at any time by sending an e-mail to <a href="mailto:contact@assuriffii.com" className="text-[#1E3A8A] hover:underline font-medium">contact@assuriffii.com</a>.
+                Company or its participating service provider may reject any registration or subsequent application from any person with or without cause at their sole discretion. Your status as a registered user creates only a customer relationship with Company and does not create an employment relationship, an independent contractor relationship, an agency relationship, or any other relationship. You may cancel your request at any time by sending an e-mail to <a href="mailto:contact@assurerates.com" className="text-[#1E3A8A] hover:underline font-medium">contact@assurerates.com</a>.
               </p>
             </section>
 
