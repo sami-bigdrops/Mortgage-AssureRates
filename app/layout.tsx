@@ -8,8 +8,8 @@ const mulish = Mulish({
 });
 
 export const metadata: Metadata = {
-  title: "Mortgage - Assuriffii",
-  description: "Assuriffii is a trusted mortgage provider in the USA offering home loans, cash-out refinancing, and easy solutions to buy a home. Get the best mortgage rates, compare lenders, and secure your home financing online with Assuriffii.",
+  title: "Mortgage - AssureRates",
+  description: "AssureRates is a trusted mortgage provider in the USA offering home loans, cash-out refinancing, and easy solutions to buy a home. Get the best mortgage rates, compare lenders, and secure your home financing online with AssureRates.",
   icons: {
     icon: '/favicon.png',
   },
