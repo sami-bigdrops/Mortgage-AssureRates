@@ -17,7 +17,7 @@ const Navbar = () => {
                     priority
                     quality={90}
                     loading="eager"
-                    className="h-auto w-50 cursor-pointer"
+                    className="h-auto w-60 cursor-pointer"
                   />
                 </Link>
               </div>
