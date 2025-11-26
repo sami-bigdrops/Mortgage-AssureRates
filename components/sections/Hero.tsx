@@ -136,7 +136,7 @@ const Hero = () => {
             
             <div className='bg-[#12266D] rounded-xl p-6 sm:p-8 max-w-2xl mx-auto lg:mx-0 shadow-2xl'>
               <p className='text-white font-[800] text-[18px] mb-6'>
-                What is your ZIP Code?
+                What is your Current ZIP Code?
               </p>
               
               {/* Mobile: Stacked layout */}
