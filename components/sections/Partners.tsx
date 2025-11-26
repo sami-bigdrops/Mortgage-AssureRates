@@ -23,7 +23,7 @@ const Partners = () => {
     ]
 
   return (
-    <div className='w-full py-0 pt-40 md:pt-20 pb-8 lg:pb-0 lg:pt-0 lg:py-16 min-h-content flex flex-col relative'>
+    <div className='w-full py-0 pt-40 md:pt-20 pb-16 lg:pb-0 lg:pt-0 lg:py-16 min-h-content flex flex-col relative'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
             <h2 className='text-lg font-base text-center'>We Partner With Top Providers</h2>
         </div>
@@ -34,8 +34,8 @@ const Partners = () => {
                         src={partner.image} 
                         alt={partner.name} 
                         width={50} 
-                        height={50} 
-                        className='w-40 h-40 md:w-50 md:h-50 lg:w-55 lg:h-55 object-contain'
+                        height={10} 
+                        className='w-45 h-45 object-contain'
                         loading="lazy"
                     />
                 </div>
