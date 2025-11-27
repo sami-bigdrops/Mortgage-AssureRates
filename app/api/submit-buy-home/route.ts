@@ -9,7 +9,31 @@ export async function POST(request: NextRequest) {
     const urlZipCode = searchParams.get('zip_code')
     const addressZip = urlZipCode || body.addressZip || ''
     
-    const { productType, state, propertyZipCode, propertyType, creditGrade, foundHome, timelineToBuy, estimatedHomeValue, downPayment, loanType, bankruptcyOrForeclosure, currentlyEmployed, lateMortgagePayments, veteranStatus, email, firstName, lastName, address, city, addressState, phoneNumber } = body
+    const { 
+      productType, 
+      state, 
+      propertyZipCode, 
+      propertyType, 
+      creditGrade, 
+      foundHome, 
+      timelineToBuy, 
+      estimatedHomeValue, 
+      downPayment, 
+      loanType, 
+      bankruptcyOrForeclosure, 
+      currentlyEmployed, 
+      lateMortgagePayments, 
+      veteranStatus, 
+      email, 
+      firstName, 
+      lastName, 
+      address, 
+      city, 
+      addressState, 
+      phoneNumber,
+      trustedformCertUrl,
+      tcpaText
+    } = body
     
     // Validate that we have addressZip (from URL or body)
     if (!addressZip || addressZip.length !== 5) {
@@ -77,32 +101,33 @@ export async function POST(request: NextRequest) {
       lp_key: process.env.BUY_HOME_LEADPROSPER_API_KEY,
       lp_subid1: '',
       lp_subid2: '',
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
       email: email.trim(),
-      productType: productType.trim(),
-      state: state.trim(),
-      propertyZipCode: propertyZipCode.trim(),
-      propertyType: propertyType.trim(),
-      creditGrade: creditGrade.trim(),
-      foundHome: foundHome.trim(),
-      timelineToBuy: timelineToBuy.trim(),
-      estimatedHomeValue: estimatedHomeValue.trim(),
-      downPayment: downPayment.trim(),
-      loanType: loanType.trim(),
-      bankruptcyOrForeclosure: bankruptcyOrForeclosure.trim(),
-      currentlyEmployed: currentlyEmployed.trim(),
-      lateMortgagePayments: lateMortgagePayments.trim(),
-      veteranStatus: veteranStatus.trim(),
+      phone: phoneNumber.trim(),
       address: address.trim(),
       city: city.trim(),
-      addressState: addressState.trim(),
-      addressZip: addressZip.trim(), // From URL or localStorage
-      phoneNumber: phoneNumber.trim(),
+      state: addressState.trim(),
       ip_address: ip,
       user_agent: request.headers.get('user-agent') || '',
       landing_page_url: request.headers.get('referer') || '',
-      
+      trustedform_cert_url: trustedformCertUrl ? trustedformCertUrl.trim() : '',
+      tcpa_text: tcpaText ? tcpaText.trim() : 'By clicking Submit Details, you agree to: (1) our TERMS OF USE, which include a Class Waiver and Mandatory Arbitration Agreement, (2) our PRIVACY POLICY, and (3) receive notices and other COMMUNICATIONS ELECTRONICALLY. By clicking Submit Details, you: (a) provide your express written consent and binding signature under the ESIGN Act for Leadpoint, Inc. dba SecureRights, a Delaware corporation, to share your information with up to four (4) of its PREMIER PARTNERS and/or third parties acting on their behalf to contact you via telephone, mobile device (including SMS and MMS) and/or email, including but not limited to texts or calls made using an automated telephone dialing system, AI-generated voice and text messages, or pre-recorded or artificial voice messages, regarding financial services or other offers related to homeownership; (b) understand that your consent is valid even if your telephone number is currently listed on any state, federal, local or corporate Do Not Call list; (c) represent that you are the wireless subscriber or customary user of the wireless number(s) provided with authority to consent; (d) understand your consent is not required in order to obtain any good or service; (e) represent that you have received and reviewed the MORTGAGE BROKER DISCLOSURES for your state; and (f) provide your consent under the Fair Credit Reporting Act for SecureRights and/or its PREMIER PARTNERS to obtain information from your personal credit profile to prequalify you for credit options and connect you with an appropriate partner. You may choose to speak with an individual service provider by dialing (844) 326-3442. Leadpoint, Inc. NMLS 3175.',
+      PRODUCT: productType.trim(),
+      PROP_ST: state.trim(),
+      PROP_ZIP: propertyZipCode.trim(),
+      PROP_DESC: propertyType.trim(),
+      CRED_GRADE: creditGrade.trim(),
+      SPEC_HOME: foundHome.trim(),
+      BUY_TIMEFRAME: timelineToBuy.trim(),
+      EST_VAL: estimatedHomeValue.toString().trim(),
+      DOWN_PMT: downPayment.toString().trim(),
+      LOAN_TYPE: loanType.trim(),
+      FHA_BANK_FORECLOSURE: bankruptcyOrForeclosure.trim(),
+      ANNUAL_VERIFIABLE_INCOME: currentlyEmployed.trim(),
+      NUM_MORTGAGE_LATES: lateMortgagePayments.trim(),
+      VA_STATUS: veteranStatus.trim(),
+      Current_address_zip_code: addressZip.trim(),
     };
 
     // Send to LeadProsper
