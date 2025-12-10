@@ -60,6 +60,7 @@ const AddressInput: React.FC<AddressInputProps> = ({
   const inputRef = useRef<HTMLInputElement>(null)
   const autocompleteRef = useRef<AutocompleteInstance | null>(null)
   const [isScriptLoaded, setIsScriptLoaded] = useState(false)
+  const isPlaceSelectingRef = useRef(false)
 
   useEffect(() => {
     // Load Google Places API script
@@ -117,6 +118,10 @@ const AddressInput: React.FC<AddressInputProps> = ({
       const autocomplete = autocompleteRef.current
       autocomplete.addListener('place_changed', () => {
         if (!autocomplete) return
+        
+        // Set flag to prevent blur validation
+        isPlaceSelectingRef.current = true
+        
         const place = autocomplete.getPlace()
         
         if (place && place.address_components) {
@@ -159,6 +164,13 @@ const AddressInput: React.FC<AddressInputProps> = ({
           if (onAddressSelect && city && state) {
             onAddressSelect(streetAddress.trim(), city, state)
           }
+          
+          // Reset flag after a short delay to allow validation to run on next blur
+          setTimeout(() => {
+            isPlaceSelectingRef.current = false
+          }, 100)
+        } else {
+          isPlaceSelectingRef.current = false
         }
       })
     }
@@ -177,7 +189,17 @@ const AddressInput: React.FC<AddressInputProps> = ({
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        onBlur={onBlur}
+        onBlur={() => {
+          // Only trigger validation if we're not in the middle of selecting a place
+          if (!isPlaceSelectingRef.current && onBlur) {
+            // Small delay to ensure place selection completes
+            setTimeout(() => {
+              if (!isPlaceSelectingRef.current) {
+                onBlur()
+              }
+            }, 150)
+          }
+        }}
         placeholder={placeholder}
         required={required}
         className={`w-full px-4 py-4 text-base border-2 rounded-xl
