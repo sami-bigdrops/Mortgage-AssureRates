@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { ArrowLeft, DollarSign, Loader2 } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { RadioButtonGroup, RangeSlider, TextInput, StateDropdown, PhoneInput, type RadioOption } from '@/components/ui'
+import { RadioButtonGroup, RangeSlider, TextInput, AddressInput, StateDropdown, PhoneInput, type RadioOption } from '@/components/ui'
 import ProgressBar from '@/components/ui/ProgressBar'
 import { validateZipCode, validateEmail, validateName, validateAddress, validateCity, validatePhoneNumber } from '@/utils/validation'
 import Link from 'next/link'
@@ -66,6 +66,10 @@ const Refinance = () => {
           })
           // Store in localStorage for button redirect
           localStorage.setItem('zip_code', urlZip)
+          // Clean URL to /form/refinance after reading zip_code (remove query params)
+          if (typeof window !== 'undefined') {
+            window.history.replaceState({}, '', '/form/refinance')
+          }
         } else {
           // If no URL zip, get from localStorage (only if not in saved form data)
           if (typeof window !== 'undefined') {
@@ -195,61 +199,56 @@ const Refinance = () => {
   const handleNext = async () => {
     if (isStepValid()) {
       if (currentStep === 19) {
-        // Submit form - Bypass LeadProsper submission, directly redirect to thank you page
+        // Submit form to LeadProsper
         setIsSubmitting(true)
         
-        // Clear form data from localStorage on successful submission
-        clearFormData()
-        
-        // Direct redirect to thank you page
-        router.push('/thankyou')
-        
-        // COMMENTED OUT: LeadProsper API submission
-        // try {
-        //   // Get addressZip from URL or localStorage (this is for the address)
-        //   let addressZip = ''
-        //   const urlZip = searchParams.get('zip_code')
-        //   if (urlZip && urlZip.length === 5) {
-        //     addressZip = urlZip
-        //     // Also store in localStorage for fallback
-        //     if (typeof window !== 'undefined') {
-        //       localStorage.setItem('zip_code', urlZip)
-        //     }
-        //   } else if (typeof window !== 'undefined') {
-        //     const storedZip = localStorage.getItem('zip_code')
-        //     if (storedZip && storedZip.length === 5) {
-        //       addressZip = storedZip
-        //     }
-        //   }
+        try {
+          // Get addressZip from URL or localStorage (this is for the address)
+          let addressZip = ''
+          const urlZip = searchParams.get('zip_code')
+          if (urlZip && urlZip.length === 5) {
+            addressZip = urlZip
+            // Also store in localStorage for fallback
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('zip_code', urlZip)
+            }
+          } else if (typeof window !== 'undefined') {
+            const storedZip = localStorage.getItem('zip_code')
+            if (storedZip && storedZip.length === 5) {
+              addressZip = storedZip
+            }
+          }
 
-        //   const formDataToSubmit = {
-        //     ...formData,
-        //     addressZip: addressZip, // Use zip code from URL/localStorage for address
-        //   }
+          const formDataToSubmit = {
+            ...formData,
+            addressZip: addressZip, // Use zip code from URL/localStorage for address
+          }
 
-        //   const response = await fetch('/api/submit-refinance', {
-        //     method: 'POST',
-        //     headers: {
-        //       'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(formDataToSubmit),
-        //   })
+          const response = await fetch('/api/submit-refinance', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formDataToSubmit),
+          })
 
-        //   const result = await response.json()
+          const result = await response.json()
 
-        //   if (result.success) {
-        //     // Redirect to thank you page (from API response or default)
-        //     const redirectUrl = result.redirectUrl || '/thankyou'
-        //     router.push(redirectUrl)
-        //   } else {
-        //     alert('Form submission failed. Please try again.')
-        //     setIsSubmitting(false)
-        //   }
-        // } catch (error) {
-        //   console.error('Error submitting form:', error)
-        //   alert('An error occurred. Please try again.')
-        //   setIsSubmitting(false)
-        // }
+          if (result.success) {
+            // Clear form data from localStorage on successful submission
+            clearFormData()
+            // Redirect to thank you page (from API response or default)
+            const redirectUrl = result.redirectUrl || '/thankyou'
+            router.push(redirectUrl)
+          } else {
+            alert('Form submission failed. Please try again.')
+            setIsSubmitting(false)
+          }
+        } catch (error) {
+          console.error('Error submitting form:', error)
+          alert('An error occurred. Please try again.')
+          setIsSubmitting(false)
+        }
       } else {
         setCurrentStep(prev => prev + 1)
         console.log('Form data:', formData)
@@ -502,7 +501,7 @@ const Refinance = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 px-4 pt-12 md:pt-24 pb-8 md:pb-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 px-4 pt-6 pb-6">
       <div className="w-full max-w-2xl mx-auto">
         {/* Progress Indicator */}
         <ProgressBar 
@@ -513,11 +512,11 @@ const Refinance = () => {
         />
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl md:rounded-3xl shadow-xl p-6 md:p-10">
+        <div className="bg-white rounded-2xl md:rounded-3xl shadow-xl p-4 md:p-6">
           {/* Step 1: Property Type */}
           {currentStep === 1 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 What type of property are you refinancing?
               </h2>
 
@@ -527,7 +526,7 @@ const Refinance = () => {
                 value={formData.propertyType}
                 onChange={(value) => handleInputChange('propertyType', value, true)}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -535,7 +534,7 @@ const Refinance = () => {
           {/* Step 2: Property Purpose */}
           {currentStep === 2 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 What is the purpose of this property?
               </h2>
 
@@ -545,7 +544,7 @@ const Refinance = () => {
                 value={formData.propertyPurpose}
                 onChange={(value) => handleInputChange('propertyPurpose', value, true)}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -553,7 +552,7 @@ const Refinance = () => {
           {/* Step 3: Credit Grade */}
           {currentStep === 3 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 What is your estimated credit score?
               </h2>
 
@@ -563,7 +562,7 @@ const Refinance = () => {
                 value={formData.creditGrade}
                 onChange={(value) => handleInputChange('creditGrade', value, true)}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -571,7 +570,7 @@ const Refinance = () => {
           {/* Step 4: Estimated Home Value */}
           {currentStep === 4 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 What is your estimated home value?
               </h2>
 
@@ -583,7 +582,7 @@ const Refinance = () => {
                 min={50000}
                 max={2000000}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -591,7 +590,7 @@ const Refinance = () => {
           {/* Step 5: Mortgage Balance */}
           {currentStep === 5 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 What is your current mortgage balance?
               </h2>
 
@@ -616,7 +615,7 @@ const Refinance = () => {
                 step={5000}
                 formatValue={formatMortgageBalance}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -624,7 +623,7 @@ const Refinance = () => {
           {/* Step 6: First Mortgage Interest Rate */}
           {currentStep === 6 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 What is your current first mortgage interest rate?
               </h2>
 
@@ -638,7 +637,7 @@ const Refinance = () => {
                 step={0.25}
                 formatValue={formatInterestRate}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -646,7 +645,7 @@ const Refinance = () => {
           {/* Step 7: Second Mortgage */}
           {currentStep === 7 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 Do you have a 2nd Mortgage?
               </h2>
 
@@ -663,7 +662,7 @@ const Refinance = () => {
                   }, 150)
                 }}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -671,7 +670,7 @@ const Refinance = () => {
           {/* Step 8: Second Mortgage Balance */}
           {currentStep === 8 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 What is your current second mortgage balance?
               </h2>
 
@@ -685,7 +684,7 @@ const Refinance = () => {
                 step={5000}
                 formatValue={formatSecondMortgageBalance}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -693,7 +692,7 @@ const Refinance = () => {
           {/* Step 9: Second Mortgage Interest Rate */}
           {currentStep === 9 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 What is your current second mortgage interest rate?
               </h2>
 
@@ -707,7 +706,7 @@ const Refinance = () => {
                 step={0.25}
                 formatValue={formatSecondInterestRate}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -715,7 +714,7 @@ const Refinance = () => {
           {/* Step 10: Additional Cash */}
           {currentStep === 10 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 How much additional cash do you wish to borrow?
               </h2>
 
@@ -729,7 +728,7 @@ const Refinance = () => {
                 step={5000}
                 formatValue={formatAdditionalCash}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -737,7 +736,7 @@ const Refinance = () => {
           {/* Step 11: Loan Type */}
           {currentStep === 11 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 What type of interest rate do you prefer?
               </h2>
 
@@ -747,7 +746,7 @@ const Refinance = () => {
                 value={formData.loanType}
                 onChange={(value) => handleInputChange('loanType', value, true)}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -755,7 +754,7 @@ const Refinance = () => {
           {/* Step 12: Bankruptcy or Foreclosure */}
           {currentStep === 12 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 Have you been in bankruptcy or foreclosure in the past three years?
               </h2>
 
@@ -765,7 +764,7 @@ const Refinance = () => {
                 value={formData.bankruptcyOrForeclosure}
                 onChange={(value) => handleInputChange('bankruptcyOrForeclosure', value, true)}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -773,7 +772,7 @@ const Refinance = () => {
           {/* Step 13: Currently Employed */}
           {currentStep === 13 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 Are you currently employed?
               </h2>
 
@@ -783,7 +782,7 @@ const Refinance = () => {
                 value={formData.currentlyEmployed}
                 onChange={(value) => handleInputChange('currentlyEmployed', value, true)}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -791,7 +790,7 @@ const Refinance = () => {
           {/* Step 14: Late Mortgage Payments */}
           {currentStep === 14 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 Any late mortgage payments in the past year?
               </h2>
 
@@ -802,7 +801,7 @@ const Refinance = () => {
                 onChange={(value) => handleInputChange('lateMortgagePayments', value, true)}
                 required
                 columns={1}
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -810,7 +809,7 @@ const Refinance = () => {
           {/* Step 15: Veteran Status */}
           {currentStep === 15 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 You or spouse a servicemember or veteran?
               </h2>
 
@@ -820,7 +819,7 @@ const Refinance = () => {
                 value={formData.veteranStatus}
                 onChange={(value) => handleInputChange('veteranStatus', value, true)}
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -828,7 +827,7 @@ const Refinance = () => {
           {/* Step 16: Email */}
           {currentStep === 16 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 What&apos;s your email address?
               </h2>
 
@@ -842,7 +841,7 @@ const Refinance = () => {
                 error={errors.email}
                 placeholder="example@email.com"
                 required
-                className="mb-8"
+                className="mb-4"
               />
             </>
           )}
@@ -850,11 +849,11 @@ const Refinance = () => {
           {/* Step 17: First Name and Last Name */}
           {currentStep === 17 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 What&apos;s your name?
               </h2>
 
-              <div className="mb-8">
+              <div className="mb-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <TextInput
                     id="firstName"
@@ -884,17 +883,37 @@ const Refinance = () => {
           {/* Step 18: Address, City, State */}
           {currentStep === 18 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 What&apos;s your address?
               </h2>
 
-              <div className="mb-8 space-y-6">
+              <div className="mb-4 space-y-4">
                 {/* Address */}
-                <TextInput
+                <AddressInput
                   id="address"
                   label="Street Address"
                   value={formData.address}
                   onChange={(value) => handleInputChange('address', value)}
+                  onAddressSelect={(address, city, state) => {
+                    handleInputChange('address', address)
+                    handleInputChange('city', city)
+                    handleInputChange('addressState', state)
+                    // Clear errors for these fields
+                    if (errors.address) {
+                      setErrors(prev => {
+                        const newErrors = { ...prev }
+                        delete newErrors.address
+                        return newErrors
+                      })
+                    }
+                    if (errors.city) {
+                      setErrors(prev => {
+                        const newErrors = { ...prev }
+                        delete newErrors.city
+                        return newErrors
+                      })
+                    }
+                  }}
                   onBlur={() => validateField('address', formData.address)}
                   error={errors.address}
                   placeholder="123 Main Street"
@@ -929,7 +948,7 @@ const Refinance = () => {
           {/* Step 19: Phone Number and Submit */}
           {currentStep === 19 && (
             <>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#246a99] mb-8 md:mb-10 font-sans">
+              <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
                 What&apos;s your phone number?
               </h2>
 
@@ -941,19 +960,19 @@ const Refinance = () => {
                 onBlur={() => validateField('phoneNumber', formData.phoneNumber)}
                 error={errors.phoneNumber}
                 required
-                className="mb-8"
+                className="mb-4"
               />
 
               {/* Navigation Buttons - Step 19 */}
-              <div className="flex gap-4 mb-8">
+              <div className="flex gap-3 mb-4">
                 {currentStep > 1 && (
                   <button
                     onClick={handleBack}
-                    className="px-6 py-4 rounded-xl font-bold text-base md:text-lg
+                    className="px-5 py-3 rounded-xl font-bold text-sm md:text-base
                       border-2 border-gray-300 text-gray-700 hover:border-[#3498DB] hover:text-[#3498DB]
                       transition-all duration-300 hover:shadow-lg flex items-center gap-2"
                   >
-                    <ArrowLeft size={20} />
+                    <ArrowLeft size={18} />
                     Back
                   </button>
                 )}
@@ -961,7 +980,7 @@ const Refinance = () => {
                   onClick={handleNext}
                   disabled={!isStepValid() || isSubmitting}
                   className={`
-                    flex-1 py-4 rounded-xl font-bold text-base md:text-lg
+                    flex-1 py-3 rounded-xl font-bold text-sm md:text-base
                     transition-all duration-300 flex items-center justify-center gap-2
                     ${
                       !isStepValid() || isSubmitting
@@ -972,7 +991,7 @@ const Refinance = () => {
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 size={20} className="animate-spin" />
+                      <Loader2 size={18} className="animate-spin" />
                       Submitting...
                     </>
                   ) : (
@@ -982,7 +1001,7 @@ const Refinance = () => {
               </div>
 
               {/* Disclaimer */}
-              <div className="mb-8 p-4 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="mb-4 p-3 bg-gray-50 rounded-xl border border-gray-200">
               <p className="text-xs text-gray-600 leading-relaxed">
                 By clicking Submit Details, you agree to: (1) our <Link href="https://securerights.org/tc/" target="_blank">TERMS OF USE</Link>, which include a Class Waiver and Mandatory Arbitration Agreement, (2) our <Link href="https://securerights.org/privacy/" target="_blank">PRIVACY POLICY</Link>, and (3) receive notices and other <Link href="https://securerights.org/electroniccommunications/" target="_blank">COMMUNICATIONS ELECTRONICALLY</Link>. By clicking Submit Details, you: (a) provide your express written consent and binding signature under the ESIGN Act for Leadpoint, Inc. dba SecureRights, a Delaware corporation, to share your information with up to four (4) of its <Link href="https://securerights.org/networkmembers/" target="_blank">PREMIER PARTNERS</Link> and/or third parties acting on their behalf to contact you via telephone, mobile device (including SMS and MMS) and/or email, including but not limited to texts or calls made using an automated telephone dialing system, AI-generated voice and text messages, or pre-recorded or artificial voice messages, regarding financial services or other offers related to homeownership; (b) understand that your consent is valid even if your telephone number is currently listed on any state, federal, local or corporate Do Not Call list; (c) represent that you are the wireless subscriber or customary user of the wireless number(s) provided with authority to consent; (d) understand your consent is not required in order to obtain any good or service; (e) represent that you have received and reviewed the <Link href="https://securerights.org/licenses/" target="_blank">MORTGAGE BROKER DISCLOSURES</Link> for your state; and (f) provide your consent under the Fair Credit Reporting Act for SecureRights and/or its <Link href="https://securerights.org/licenses/" target="_blank">PREMIER PARTNERS</Link> to obtain information from your personal credit profile to prequalify you for credit options and connect you with an appropriate partner. You may choose to speak with an individual service provider by dialing (844) 326-3442. Leadpoint, Inc. NMLS 3175.
                 </p>
@@ -992,15 +1011,15 @@ const Refinance = () => {
 
           {/* Navigation Buttons - All other steps */}
           {currentStep !== 19 && (
-            <div className="flex gap-4">
+            <div className="flex gap-3">
             {currentStep > 1 && (
               <button
                 onClick={handleBack}
-                className="px-6 py-4 rounded-xl font-bold text-base md:text-lg
+                className="px-5 py-3 rounded-xl font-bold text-sm md:text-base
                   border-2 border-gray-300 text-gray-700 hover:border-[#3498DB] hover:text-[#3498DB]
                   transition-all duration-300 hover:shadow-lg flex items-center gap-2"
               >
-                <ArrowLeft size={20} />
+                <ArrowLeft size={18} />
                 Back
               </button>
             )}
@@ -1018,7 +1037,7 @@ const Refinance = () => {
                     onClick={handleNext}
                     disabled={isDisabled}
                     className={`
-                      ${currentStep > 1 ? '' : 'flex-1'} py-4 rounded-xl font-bold text-base md:text-lg
+                      ${currentStep > 1 ? '' : 'flex-1'} py-3 rounded-xl font-bold text-sm md:text-base
                       transition-all duration-300 flex items-center justify-center gap-2
                       ${
                         !isDisabled
@@ -1040,10 +1059,10 @@ const Refinance = () => {
 
         {/* Redirect Button - Only show on step 1, outside the card */}
         {currentStep === 1 && (
-          <div className="mt-12 flex justify-center">
+          <div className="mt-6 flex justify-center">
             <button
               onClick={handleRedirectToBuyHome}
-              className="w-full max-w-xl px-6 py-4 rounded-xl font-semibold text-sm md:text-base
+              className="w-full px-6 py-4 rounded-xl font-semibold text-base
                 border-2 border-[#246a99] text-[#246a99] 
                 hover:bg-[#246a99] hover:text-white
                 transition-all duration-300 hover:shadow-lg hover:scale-105

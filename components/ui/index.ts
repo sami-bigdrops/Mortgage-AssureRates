@@ -1,5 +1,6 @@
 // Form Input Components
 export { default as TextInput } from './TextInput'
+export { default as AddressInput } from './AddressInput'
 export { default as ZipCodeInput } from './ZipCodeInput'
 export { default as PhoneInput } from './PhoneInput'
 export { default as RadioButtonGroup, type RadioOption } from './RadioButtonGroup'

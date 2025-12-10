@@ -2,16 +2,30 @@
 
 import React, { useState, useEffect, Suspense } from 'react'
 import { Home, ArrowRight, Banknote } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import BuyHome from '@/app/form/products/BuyHome'
 import Refinance from '@/app/form/products/Refinance'
 
 function FormContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
+  const [hasRedirected, setHasRedirected] = useState(false)
 
   useEffect(() => {
+    // Check for zip code in localStorage and auto-redirect to refinance
+    if (!hasRedirected && typeof window !== 'undefined') {
+      const storedZip = localStorage.getItem('zip_code')
+      if (storedZip && storedZip.length === 5) {
+        // Auto-redirect to refinance with zip code
+        router.replace(`/form/refinance?zip_code=${storedZip}`)
+        setHasRedirected(true)
+        return
+      }
+    }
+
+    // Check URL params for product selection
     const product = searchParams.get('product')
     if (product === 'buy-home') {
       setSelectedOption('buy-home')
@@ -20,7 +34,7 @@ function FormContent() {
       setSelectedOption('refinance')
       setShowForm(true)
     }
-  }, [searchParams])
+  }, [searchParams, router, hasRedirected])
 
   const options = [
     {
@@ -36,7 +50,7 @@ function FormContent() {
   ]
 
   const selectionScreen = (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 px-4 pt-12 md:pt-24 pb-8 md:pb-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 px-4 pt-10 pb-8">
       <div className="w-full max-w-5xl mx-auto">
         <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-center text-[#246a99] mb-8 md:mb-16 font-sans">
           I&apos;m looking to:
