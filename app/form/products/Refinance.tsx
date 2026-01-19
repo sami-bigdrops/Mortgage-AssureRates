@@ -231,11 +231,22 @@ const Refinance = () => {
           // Strip formatting from phone number (remove all non-digits)
           const unformattedPhone = formData.phoneNumber.replace(/\D/g, '')
 
+          // Get TrustedForm certificate URL - check state first, then DOM as fallback
+          let certUrl = trustedFormCertUrl
+          if (!certUrl && typeof window !== 'undefined') {
+            const certInput = document.getElementById('xxTrustedFormCertUrl_0') as HTMLInputElement
+            const certInputByName = document.querySelector('input[name="xxTrustedFormCertUrl"]') as HTMLInputElement
+            const certInputToCheck = certInput || certInputByName
+            if (certInputToCheck?.value?.trim()) {
+              certUrl = certInputToCheck.value.trim()
+            }
+          }
+
           const formDataToSubmit = {
             ...formData,
             phoneNumber: unformattedPhone, // Submit unformatted phone number
             addressZip: addressZip, // Use zip code from URL/localStorage for address
-            trustedformCertUrl: trustedFormCertUrl, // Include TrustedForm certificate URL
+            trustedformCertUrl: certUrl || '', // Include TrustedForm certificate URL
           }
 
           const response = await fetch('/api/submit-refinance', {
@@ -265,7 +276,6 @@ const Refinance = () => {
         }
       } else {
         setCurrentStep(prev => prev + 1)
-        console.log('Form data:', formData)
       }
     }
   }

@@ -114,6 +114,67 @@ const BuyHome = () => {
     }
   }, [])
 
+    // Also check for TrustedForm certificate URL periodically in case callback doesn't fire
+    useEffect(() => {
+      if (typeof window === "undefined") return;
+      
+      let intervalId: NodeJS.Timeout | null = null;
+      let timeoutId: NodeJS.Timeout | null = null;
+      
+      const checkTrustedFormCert = () => {
+        // Try multiple possible field names/IDs
+        const certInput = document.getElementById('xxTrustedFormCertUrl_0') as HTMLInputElement;
+        const certInputByName = document.querySelector('input[name="xxTrustedFormCertUrl"]') as HTMLInputElement;
+        const certInputToCheck = certInput || certInputByName;
+        
+        if (certInputToCheck) {
+          const certValue = certInputToCheck.value?.trim();
+          if (certValue && certValue !== trustedFormCertUrl) {
+            setTrustedFormCertUrl(certValue);
+            if (intervalId) {
+              clearInterval(intervalId);
+              intervalId = null;
+            }
+            return true;
+          }
+        }
+        return false;
+      };
+  
+      // Wait a bit for TrustedForm script to initialize
+      const startDelay = setTimeout(() => {
+        // Check immediately
+        checkTrustedFormCert();
+  
+        // Check periodically until we have the cert URL or timeout
+        intervalId = setInterval(() => {
+          checkTrustedFormCert();
+        }, 1000); // Check every 1 second
+  
+        // Clear interval after 20 seconds (extended timeout)
+        timeoutId = setTimeout(() => {
+          if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+          }
+          // Final check
+          const found = checkTrustedFormCert();
+          if (!found && !trustedFormCertUrl) {
+            const scriptLoaded = document.querySelector('script[src*="trustedform.js"]');
+            if (!scriptLoaded) {
+              console.error("TrustedForm: Script not found in DOM");
+            }
+          }
+        }, 20000);
+      }, 2000); // Wait 2 seconds for script to load
+  
+      return () => {
+        clearTimeout(startDelay);
+        if (intervalId) clearInterval(intervalId);
+        if (timeoutId) clearTimeout(timeoutId);
+      };
+    }, [trustedFormCertUrl]);
+
   const handleInputChange = (field: string, value: string | number, autoAdvance = false) => {
     // Capture current step before state update
     const stepToAdvance = currentStep
@@ -236,11 +297,22 @@ const BuyHome = () => {
           // Strip formatting from phone number (remove all non-digits)
           const unformattedPhone = formData.phoneNumber.replace(/\D/g, '')
 
+          // Get TrustedForm certificate URL - check state first, then DOM as fallback
+          let certUrl = trustedFormCertUrl
+          if (!certUrl && typeof window !== 'undefined') {
+            const certInput = document.getElementById('xxTrustedFormCertUrl_0') as HTMLInputElement
+            const certInputByName = document.querySelector('input[name="xxTrustedFormCertUrl"]') as HTMLInputElement
+            const certInputToCheck = certInput || certInputByName
+            if (certInputToCheck?.value?.trim()) {
+              certUrl = certInputToCheck.value.trim()
+            }
+          }
+
           const formDataToSubmit = {
             ...formData,
             phoneNumber: unformattedPhone, // Submit unformatted phone number
             addressZip: addressZip, // Use zip code from URL/localStorage for address
-            trustedformCertUrl: trustedFormCertUrl, // Include TrustedForm certificate URL
+            trustedformCertUrl: certUrl || '', // Include TrustedForm certificate URL
           }
 
           const response = await fetch('/api/submit-buy-home', {
@@ -270,7 +342,6 @@ const BuyHome = () => {
         }
       } else {
         setCurrentStep(prev => prev + 1)
-    console.log('Form data:', formData)
       }
     }
   }

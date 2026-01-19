@@ -153,9 +153,6 @@ export async function POST(request: NextRequest) {
       result = { status: 'ACCEPTED' };
     }
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('LeadProsper response:', result);
-    }
 
     if (result.status === 'ACCEPTED' || result.status === 'DUPLICATED' || result.status === 'ERROR') {
       // Generate unique access token for thank you page

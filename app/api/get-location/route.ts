@@ -59,7 +59,6 @@ export async function GET(request: NextRequest) {
           })
         }
       } catch (error) {
-        console.log('IP detection failed:', error)
         // Continue with local IP
       }
       
@@ -167,7 +166,6 @@ async function getLocationFromIP(ip: string): Promise<LocationData> {
         }
       }
     } catch (error) {
-      console.log(`API ${apiUrl} failed:`, error)
       continue
     }
   }
