@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
+import TrustedForm from '@/components/trustedForm'
 import { ArrowLeft, DollarSign, Loader2 } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { RadioButtonGroup, RangeSlider, TextInput, AddressInput, StateDropdown, PhoneInput, type RadioOption } from '@/components/ui'
@@ -15,6 +16,7 @@ const Refinance = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isInitialized, setIsInitialized] = useState(false)
+  const [trustedFormCertUrl, setTrustedFormCertUrl] = useState("")
   const [formData, setFormData] = useState({
     productType: 'PP_REFI',
     zipCode: '',
@@ -131,6 +133,13 @@ const Refinance = () => {
     }
   }
 
+  // Handle TrustedForm certificate data
+  const handleTrustedFormReady = useCallback((certUrl: string) => {
+    if (certUrl) {
+      setTrustedFormCertUrl(certUrl)
+    }
+  }, [])
+
   const handleInputChange = (field: string, value: string | number, autoAdvance = false) => {
     setFormData(prev => ({
       ...prev,
@@ -226,6 +235,7 @@ const Refinance = () => {
             ...formData,
             phoneNumber: unformattedPhone, // Submit unformatted phone number
             addressZip: addressZip, // Use zip code from URL/localStorage for address
+            trustedformCertUrl: trustedFormCertUrl, // Include TrustedForm certificate URL
           }
 
           const response = await fetch('/api/submit-refinance', {
@@ -525,6 +535,7 @@ const Refinance = () => {
           }}
           className="bg-white rounded-2xl md:rounded-3xl shadow-xl p-4 md:p-6"
         >
+          <TrustedForm onCertUrlReady={handleTrustedFormReady} />
           {/* Step 1: Property Type */}
           {currentStep === 1 && (
             <>

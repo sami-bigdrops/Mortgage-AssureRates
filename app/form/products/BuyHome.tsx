@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
+import TrustedForm from '@/components/trustedForm'
 import { ArrowLeft, Home, Loader2 } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { RangeSlider, StateDropdown, TextInput, AddressInput, ZipCodeInput, PhoneInput, RadioButtonGroup, type RadioOption } from '@/components/ui'
@@ -15,6 +16,7 @@ const BuyHome = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isInitialized, setIsInitialized] = useState(false)
+  const [trustedFormCertUrl, setTrustedFormCertUrl] = useState("")
   const [formData, setFormData] = useState({
     productType: 'PP_NEWHOME',
     state: '',
@@ -104,6 +106,13 @@ const BuyHome = () => {
       localStorage.removeItem('buyhome_current_step')
     }
   }
+
+  // Handle TrustedForm certificate data
+  const handleTrustedFormReady = useCallback((certUrl: string) => {
+    if (certUrl) {
+      setTrustedFormCertUrl(certUrl)
+    }
+  }, [])
 
   const handleInputChange = (field: string, value: string | number, autoAdvance = false) => {
     // Capture current step before state update
@@ -231,6 +240,7 @@ const BuyHome = () => {
             ...formData,
             phoneNumber: unformattedPhone, // Submit unformatted phone number
             addressZip: addressZip, // Use zip code from URL/localStorage for address
+            trustedformCertUrl: trustedFormCertUrl, // Include TrustedForm certificate URL
           }
 
           const response = await fetch('/api/submit-buy-home', {
@@ -402,6 +412,9 @@ const BuyHome = () => {
           }}
           className="bg-white rounded-2xl md:rounded-3xl shadow-xl p-4 md:p-6"
         >
+          
+          <TrustedForm onCertUrlReady={handleTrustedFormReady} />
+
           {/* Step 1: State */}
           {currentStep === 1 && (
             <>
