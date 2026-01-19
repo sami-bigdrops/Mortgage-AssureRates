@@ -512,7 +512,15 @@ const Refinance = () => {
         />
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl md:rounded-3xl shadow-xl p-4 md:p-6">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault()
+            if (currentStep === 19 && isStepValid()) {
+              handleNext()
+            }
+          }}
+          className="bg-white rounded-2xl md:rounded-3xl shadow-xl p-4 md:p-6"
+        >
           {/* Step 1: Property Type */}
           {currentStep === 1 && (
             <>
@@ -1055,7 +1063,7 @@ const Refinance = () => {
             })()}
           </div>
           )}
-        </div>
+        </form>
 
         {/* Redirect Button - Only show on step 1, outside the card */}
         {currentStep === 1 && (

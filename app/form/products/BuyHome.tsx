@@ -389,7 +389,15 @@ const BuyHome = () => {
         />
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl md:rounded-3xl shadow-xl p-4 md:p-6">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault()
+            if (currentStep === 17 && isStepValid()) {
+              handleNext()
+            }
+          }}
+          className="bg-white rounded-2xl md:rounded-3xl shadow-xl p-4 md:p-6"
+        >
           {/* Step 1: State */}
           {currentStep === 1 && (
             <>
@@ -874,7 +882,7 @@ const BuyHome = () => {
               })()}
             </div>
           )}
-        </div>
+        </form>
 
         {/* Redirect Button - Only show on step 1, outside the card */}
         {currentStep === 1 && (
