@@ -219,8 +219,12 @@ const Refinance = () => {
             }
           }
 
+          // Strip formatting from phone number (remove all non-digits)
+          const unformattedPhone = formData.phoneNumber.replace(/\D/g, '')
+
           const formDataToSubmit = {
             ...formData,
+            phoneNumber: unformattedPhone, // Submit unformatted phone number
             addressZip: addressZip, // Use zip code from URL/localStorage for address
           }
 
