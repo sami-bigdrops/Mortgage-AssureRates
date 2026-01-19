@@ -451,7 +451,7 @@ const BuyHome = () => {
           {currentStep === 4 && (
             <>
               <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
-                What is your estimated credit score?
+                How would you rate your credit?
               </h2>
 
 <RadioButtonGroup
@@ -473,7 +473,7 @@ const BuyHome = () => {
               </h2>
 
 <RadioButtonGroup
-                label="Select an Option"
+                
                 options={homeFoundOptions}
                 value={formData.foundHome}
                 onChange={(value) => handleInputChange('foundHome', value, true)}
@@ -577,7 +577,7 @@ const BuyHome = () => {
               </h2>
 
 <RadioButtonGroup
-                label="Select an Option"
+                
                 options={bankruptcyOptions}
                 value={formData.bankruptcyOrForeclosure}
                 onChange={(value) => handleInputChange('bankruptcyOrForeclosure', value, true)}
@@ -595,7 +595,7 @@ const BuyHome = () => {
               </h2>
 
 <RadioButtonGroup
-                label="Select an Option"
+                
                 options={employmentOptions}
                 value={formData.currentlyEmployed}
                 onChange={(value) => handleInputChange('currentlyEmployed', value, true)}
@@ -613,7 +613,7 @@ const BuyHome = () => {
               </h2>
 
 <RadioButtonGroup
-                label="Select an Option"
+                
                 options={lateMortgagePaymentsOptions}
                 value={formData.lateMortgagePayments}
                 onChange={(value) => handleInputChange('lateMortgagePayments', value, true)}
@@ -632,7 +632,7 @@ const BuyHome = () => {
               </h2>
 
 <RadioButtonGroup
-                label="Select an Option"
+                
                 options={veteranStatusOptions}
                 value={formData.veteranStatus}
                 onChange={(value) => handleInputChange('veteranStatus', value, true)}

@@ -553,7 +553,7 @@ const Refinance = () => {
           {currentStep === 3 && (
             <>
               <h2 className="text-xl md:text-2xl font-bold text-[#246a99] mb-4 md:mb-5 font-sans">
-                What is your estimated credit score?
+                How would you rate your credit?
               </h2>
 
               <RadioButtonGroup
@@ -650,7 +650,7 @@ const Refinance = () => {
               </h2>
 
               <RadioButtonGroup
-                label="Select an Option"
+                
                 options={secondMortgageOptions}
                 value={formData.secondMortgage}
                 onChange={(value) => {
@@ -759,7 +759,7 @@ const Refinance = () => {
               </h2>
 
               <RadioButtonGroup
-                label="Select an Option"
+                
                 options={bankruptcyOptions}
                 value={formData.bankruptcyOrForeclosure}
                 onChange={(value) => handleInputChange('bankruptcyOrForeclosure', value, true)}
@@ -777,7 +777,7 @@ const Refinance = () => {
               </h2>
 
               <RadioButtonGroup
-                label="Select an Option"
+                
                 options={employmentOptions}
                 value={formData.currentlyEmployed}
                 onChange={(value) => handleInputChange('currentlyEmployed', value, true)}
@@ -795,7 +795,7 @@ const Refinance = () => {
               </h2>
 
               <RadioButtonGroup
-                label="Select an Option"
+                
                 options={lateMortgagePaymentsOptions}
                 value={formData.lateMortgagePayments}
                 onChange={(value) => handleInputChange('lateMortgagePayments', value, true)}
@@ -814,7 +814,7 @@ const Refinance = () => {
               </h2>
 
               <RadioButtonGroup
-                label="Select an Option"
+                
                 options={veteranStatusOptions}
                 value={formData.veteranStatus}
                 onChange={(value) => handleInputChange('veteranStatus', value, true)}

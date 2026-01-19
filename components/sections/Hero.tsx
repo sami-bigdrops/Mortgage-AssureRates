@@ -8,7 +8,7 @@ import { validateZipCode } from '@/utils/validation'
 const Hero = () => {
   const [zipCode, setZipCode] = useState('')
   const [isLoadingLocation, setIsLoadingLocation] = useState(false)
-  const [zipCodeError, setZipCodeError] = useState<string>('')
+  const [state, setState] = useState<string>('')
 
   // Function to fetch user location using server-side IP detection (same as LeadProsper)
   const fetchUserLocation = useCallback(async () => {
@@ -33,6 +33,10 @@ const Hero = () => {
       } else {
         // Keep empty if location not available
         setZipCode('')
+      }
+      
+      if (data.state) {
+        setState(data.state)
       }
     } catch {
       // Keep empty on error
@@ -70,7 +74,6 @@ const Hero = () => {
     // Validate ZIP code using validation utility
     const validation = validateZipCode(zipCode)
     if (!validation.valid) {
-      setZipCodeError(validation.error || 'Please enter a valid 5-digit ZIP code')
       return
     }
 
@@ -108,6 +111,18 @@ const Hero = () => {
     }
   }
 
+  // Format date as "JAN 19, 2026"
+  const formatDate = (date: Date): string => {
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+    const month = months[date.getMonth()]
+    const day = date.getDate()
+    const year = date.getFullYear()
+    return `${month} ${day}, ${year}`
+  }
+
+  const currentDate = formatDate(new Date())
+  const displayState = state || 'YOUR STATE'
+
   return (
     <div className='w-full min-h-content sm:min-h-[800px] xl:min-h-[400px] bg-gradient-to-b from-[#8EC4F6] to-[#FFF] flex flex-col relative pb-20 lg:py-20'>
       {/* Background Illustration */}
@@ -130,13 +145,24 @@ const Hero = () => {
         <div className='w-full'>
           {/* Content */}
           <div className='max-w-4xl space-y-8 mx-auto lg:mx-0 py-0 lg:py-16'>
-            <h1 className='text-[32px] font-[800] text-[#12266D] leading-tight text-center lg:text-left max-w-[360px] lg:max-w-none mx-auto lg:mx-0'>
-              See how much cash your home could unlock today!
+            {/* State Update Title */}
+            <p className='text-[#12266D] font-[700] text-base md:text-lg text-center lg:text-left mb-2'>
+              {displayState} UPDATE: {currentDate}
+            </p>
+            
+            {/* Main Title */}
+            <h1 className='text-[32px] font-[800] text-[#12266D] leading-tight text-center lg:text-left max-w-[360px] lg:max-w-none mx-auto lg:mx-0 mb-2'>
+              UPDATED RATES JUST RELEASED
             </h1>
             
+            {/* Subtitle */}
+            <h2 className='text-[24px] font-[700] text-[#12266D] leading-tight text-center lg:text-left max-w-[360px] lg:max-w-none mx-auto lg:mx-0 mb-6'>
+              CHECK YOUR ZIP CODE
+            </h2>
+            
             <div className='bg-[#12266D] rounded-xl p-6 sm:p-8 max-w-2xl mx-auto lg:mx-0 shadow-2xl'>
-              <p className='text-white font-[800] text-[18px] mb-6'>
-                What is your Current ZIP Code?
+              <p className='text-white font-[600] text-[16px] mb-6'>
+                Eligibility varies. Enter Zip to check eligibility
               </p>
               
               {/* Mobile: Stacked layout */}
