@@ -27,8 +27,8 @@ const Footer = () => {
     <footer className='w-full bg-white py-12 border-t border-gray-200'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         {/* Top Section - Logo and Disclaimer */}
-        <div className='mb-8'>
-          <div className='flex items-center mb-4'>
+        <div className='mb-8 flex flex-col items-center justify-center'>
+          <div className='flex items-center justify-center mb-4'>
             <Link href="/" className="block">
               <Image
                 src='/logo.svg'
@@ -40,7 +40,7 @@ const Footer = () => {
               />
             </Link>
           </div>
-          <p className='text-md text-gray-700 max-w-3xl leading-relaxed'>
+          <p className='text-md text-gray-700 max-w-2xl leading-relaxed text-center'>
             For quality control purposes, your activity on this site may be monitored or recorded by AssureRates or its service providers.
           </p>
         </div>
