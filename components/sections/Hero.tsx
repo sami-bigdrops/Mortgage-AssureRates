@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import { validateZipCode } from '@/utils/validation'
+import { track } from '@vercel/analytics/react'
 
 const Hero = () => {
   const [zipCode, setZipCode] = useState('')
@@ -99,6 +100,8 @@ const Hero = () => {
     if (utmS1) params.set('c1', utmS1)
 
     const redirectUrl = `${baseUrl}?${params.toString()}`
+
+    track('zip_submission', { state, zip_code: zipCode })
     
     // Redirect to the quote page
     window.location.href = redirectUrl
