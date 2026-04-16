@@ -1,6 +1,5 @@
 import React from 'react'
 import { DollarSign, Clock, TrendingUp } from 'lucide-react'
-import Link from 'next/link'
 
 const Features = () => {
 
