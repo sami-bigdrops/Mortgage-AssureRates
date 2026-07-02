@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
             }
           })
         }
-      } catch (error) {
+      } catch {
         // Continue with local IP
       }
       
@@ -165,7 +165,7 @@ async function getLocationFromIP(ip: string): Promise<LocationData> {
           ip: ip
         }
       }
-    } catch (error) {
+    } catch {
       continue
     }
   }
